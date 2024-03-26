@@ -6,15 +6,12 @@
   "action": {
     "default_popup": "popup.html"
   },
-  "web_accessible_resources": [
+  "content_scripts": [
     {
-      "resources": ["content.js"],
-      "matches": ["<all_urls>"]
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
     }
   ],
-  "host_permissions": ["<all_urls>"],
-  "service_worker": {
-    "script": "service-worker.js"
-  },
+  "options_page": "options.html",
   "permissions": ["storage"]
 }
