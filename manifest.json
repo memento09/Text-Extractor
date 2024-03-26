@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+  "name": "Text Extractor",
+  "version": "1.0",
+  "description": "Extracts texts from specified elements on the page.",
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "permissions": ["storage"]
+}
