@@ -1,36 +1,21 @@
 async function getSettings() {
-  const result = await chrome.storage.sync.get(["selector", "hostPermissions"]);
+  const result = await chrome.storage.sync.get(["selector"]);
   return {
     selector:
       result.selector || 'span[class^="TranscriptCue_lazy_module_cueText__"]',
-    hostPermissions: result.hostPermissions || ["<all_urls>"],
   };
-}
-
-async function requestPermissions(hostPermissions) {
-  if (chrome.permissions && chrome.permissions.request) {
-    try {
-      await chrome.permissions.request({ origins: hostPermissions });
-    } catch (e) {
-      console.error("Error requesting permissions:", e);
-    }
-  } else {
-    console.warn("chrome.permissions.request API is not available");
-  }
 }
 
 chrome.runtime.onMessage.addListener(async (message, sender) => {
   if (message.type === "FETCH_CONTENT") {
-    const { selector, hostPermissions } = await getSettings();
-    chrome.permissions.request({ origins: hostPermissions });
+    const { selector } = await getSettings();
     const texts = extractTexts(selector);
     chrome.runtime.sendMessage({ action: "updateText", texts });
   }
 });
 
 async function start() {
-  const { selector, hostPermissions } = await getSettings();
-  await requestPermissions(hostPermissions);
+  const { selector } = await getSettings();
   watchForUpdates(selector);
 }
 
