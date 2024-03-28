@@ -1,14 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "Text Extractor",
+  "name": "Text Extractor from Transcripts",
+  "short_name": "Text Extractor",
   "version": "1.0",
-  "description": "Extracts texts from specified elements on the page.",
+  "description": "Extracts texts from specified elements on the vimeo.com.",
   "action": {
     "default_popup": "popup.html"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["*://*.vimeo.com/*"],
       "js": ["content.js"]
     }
   ],
