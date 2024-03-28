@@ -6,19 +6,6 @@ async function getSettings() {
   };
 }
 
-chrome.runtime.onMessage.addListener(async (message, sender) => {
-  if (message.type === "FETCH_CONTENT") {
-    const { selector } = await getSettings();
-    const texts = extractTexts(selector);
-    chrome.runtime.sendMessage({ action: "updateText", texts });
-  }
-});
-
-async function start() {
-  const { selector } = await getSettings();
-  watchForUpdates(selector);
-}
-
 function extractTexts(selector) {
   const texts = [];
   const elements = document.querySelectorAll(selector);
@@ -42,4 +29,11 @@ function watchForUpdates(selector) {
   });
 }
 
-start();
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  if (message.action === "startExtraction") {
+    const { selector } = await getSettings();
+    const texts = extractTexts(selector);
+    chrome.runtime.sendMessage({ action: "updateText", texts });
+    watchForUpdates(selector);
+  }
+});

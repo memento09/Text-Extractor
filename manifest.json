@@ -7,11 +7,5 @@
   "action": {
     "default_popup": "popup.html"
   },
-  "content_scripts": [
-    {
-      "matches": ["*://*.vimeo.com/*"],
-      "js": ["content.js"]
-    }
-  ],
-  "permissions": ["storage", "activeTab"]
+  "permissions": ["storage", "activeTab", "scripting"]
 }
