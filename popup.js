@@ -6,14 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   chrome.storage.sync.get("selector", function (data) {
     const defaultSelector =
       'span[class^="TranscriptCue_lazy_module_cueText__"]';
-    selectorInput.value = data.selector || defaultSelector;
-  });
-
-  saveButton.addEventListener("click", function () {
-    const selector = selectorInput.value;
-    chrome.storage.sync.set({ selector: selector }, function () {
-      console.log(`Selector saved: ${selector}`);
-    });
+    selectorInput.value = defaultSelector;
   });
 
   chrome.runtime.onMessage.addListener(function (request) {
