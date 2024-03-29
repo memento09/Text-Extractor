@@ -6,9 +6,27 @@ async function getSettings() {
   };
 }
 
-function extractTexts(selector) {
+// iframeのドキュメントオブジェクトを取得してメッセージを送信
+const iframeDoc = Array.from(document.querySelectorAll('iframe'))
+                       .find(iframe => iframe.src.includes('vimeo.com'))
+                       .contentWindow.document;
+chrome.runtime.sendMessage({ action: 'getIframeDoc', iframeDoc });
+
+function watchForUpdates(selector, iframeDocument) {
+  const observer = new MutationObserver(function (mutations) {
+    const targetTexts = extractTexts(selector, iframeDocument);
+    chrome.runtime.sendMessage({ action: "updateText", texts: targetTexts });
+  });
+
+  observer.observe(iframeDocument.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+function extractTexts(selector, iframeDocument) {
   const texts = [];
-  const elements = document.querySelectorAll(selector);
+  const elements = iframeDocument.querySelectorAll(selector);
 
   elements.forEach((el) => {
     texts.push(el.textContent.trim());
@@ -16,24 +34,3 @@ function extractTexts(selector) {
 
   return texts;
 }
-
-function watchForUpdates(selector) {
-  const observer = new MutationObserver(function (mutations) {
-    const targetTexts = extractTexts(selector);
-    chrome.runtime.sendMessage({ action: "updateText", texts: targetTexts });
-  });
-
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
-}
-
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (message.action === "startExtraction") {
-    const { selector } = await getSettings();
-    const texts = extractTexts(selector);
-    chrome.runtime.sendMessage({ action: "updateText", texts });
-    watchForUpdates(selector);
-  }
-});
